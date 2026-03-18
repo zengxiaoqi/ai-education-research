@@ -1,42 +1,47 @@
 ---
 name: vercel-deploy
-description: Deploy web apps to Vercel with a safe preflight checklist. Use when user says /vercel-deploy, asks for one-click launch, production deployment, env setup, domain binding, or post-release checks.
+description: Deploy to Vercel with preflight checks and post-release verification. Use when user says /vercel-deploy or asks for production launch, environment setup, domain binding, rollout checks, and rollback guidance.
 ---
 
-# Vercel Deploy Skill
+# Vercel Deploy
 
-Ship safely and verify immediately after release.
+Deploy safely and verify quickly.
 
-## Pre-deploy checks
+## Preflight Checklist
 
-- Build passes locally
-- Required env vars are documented and set
-- Error handling pages exist
+- Build succeeds locally
+- Required env vars are defined
+- Error/loading/fallback pages exist
 - Basic metadata/SEO configured
 
-## Deployment workflow
+## Deployment Workflow
 
-1. Connect repository to Vercel.
-2. Configure framework preset and build settings.
-3. Add environment variables for Preview/Production.
-4. Deploy preview and smoke-test.
-5. Promote to production.
+1. Connect repository to Vercel
+2. Set framework preset + build settings
+3. Configure env vars (Preview + Production)
+4. Deploy preview and smoke test
+5. Promote to production
 
-## Post-deploy checklist (first 24h)
+## Post-deploy (first 24h)
 
-- Verify key routes and auth flow
-- Check logs for runtime errors
-- Track performance (LCP/TTFB)
-- Confirm domain + HTTPS certificate
-- Confirm analytics/events flowing
+- Validate P0 user paths
+- Check runtime logs/errors
+- Verify LCP/TTFB baseline
+- Verify domain + TLS
+- Verify analytics/events
 
-## Rollback rule
+## Rollback Rule
 
-If P0 flow breaks, rollback immediately and open hotfix branch.
+If any P0 flow is broken, rollback immediately and open hotfix branch.
 
-## Output format when assisting
+## Assistant Output Format
 
 - Deployment status
-- URL(s): preview + production
-- Missing env vars (if any)
-- Risk notes and next actions
+- Preview URL
+- Production URL
+- Missing env vars
+- Risks + next actions
+
+## Example Trigger Prompt
+
+`/vercel-deploy: 部署当前 Next.js 项目到生产，先做预检再给发布结果。`

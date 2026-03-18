@@ -1,48 +1,82 @@
 ---
 name: product-requirements
-description: Generate a practical PRD (Product Requirements Document) from rough ideas. Use when user says /product-requirements, asks to clarify product scope, MVP, user stories, acceptance criteria, or feature priorities.
+description: Generate an implementation-ready PRD from rough ideas. Use when user says /product-requirements, asks to define MVP scope, user stories, acceptance criteria, priorities, risks, or delivery milestones.
 ---
 
-# Product Requirements (PRD) Skill
+# Product Requirements (PRD)
 
-Turn product ideas into an implementation-ready PRD.
+Convert idea -> executable product spec.
+
+## Required Inputs
+
+- Product one-liner
+- Target user segment
+- Top pain point
+- Core value proposition
+- MVP deadline (or sprint window)
+- Constraints (team size, budget, compliance, tech)
 
 ## Workflow
 
-1. Capture basics in 6 lines:
-   - Product one-liner
-   - Target user
-   - Main pain point
-   - Core value
-   - MVP scope
-   - Out-of-scope
-2. Define goals and success metrics (3 max, measurable)
-3. Convert needs into user stories (`As a ... I want ... so that ...`)
-4. Build feature list with priority:
-   - P0 = must have
-   - P1 = should have
-   - P2 = nice to have
-5. Add non-functional requirements:
-   - performance, security, reliability, accessibility, SEO
-6. Write acceptance criteria per P0/P1 feature (testable)
-7. Add risks, dependencies, and milestone plan
+1. Clarify scope boundaries (`in` / `out`)
+2. Define measurable goals (max 3)
+3. Write key user stories
+4. Prioritize requirements (P0/P1/P2)
+5. Add non-functional requirements
+6. Add acceptance criteria for P0/P1
+7. Add risks, dependencies, milestones
 
-## Output format
+## Output Template
 
-Use this exact structure:
+### 1) Product Overview
+- Problem statement:
+- Target users:
+- Product value:
 
-1. Product overview
-2. Target users & scenarios
-3. Goals & metrics
-4. Scope (in / out)
-5. Functional requirements (P0/P1/P2)
-6. Non-functional requirements
-7. Acceptance criteria
-8. Risks & dependencies
-9. Delivery milestones
+### 2) Goals & Metrics
+- Goal 1 + metric:
+- Goal 2 + metric:
+- Goal 3 + metric:
 
-## Quality bar
+### 3) Scope
+- In scope:
+- Out of scope:
 
-- No vague terms like “fast enough” or “good UX” without numbers.
-- Every P0 feature must have explicit acceptance criteria.
-- Keep PRD lean and actionable.
+### 4) Functional Requirements
+- P0 (must):
+- P1 (should):
+- P2 (nice):
+
+### 5) Non-functional Requirements
+- Performance:
+- Security:
+- Reliability:
+- Accessibility:
+- SEO:
+
+### 6) Acceptance Criteria
+For each P0/P1 feature:
+- Given ...
+- When ...
+- Then ...
+
+### 7) Risks & Dependencies
+- Risk:
+- Impact:
+- Mitigation:
+
+### 8) Milestones
+- M1:
+- M2:
+- M3:
+
+## Quality Checklist
+
+- Every P0 has testable acceptance criteria
+- No vague wording without numbers
+- Scope is explicitly bounded
+- Milestones align with priority and constraints
+
+## Example Trigger Prompt
+
+`/product-requirements: 做一个 AI 教育产品，目标是 K12 家长，2 周做 MVP。输出可开发 PRD。`

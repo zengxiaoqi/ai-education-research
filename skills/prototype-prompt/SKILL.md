@@ -1,42 +1,76 @@
 ---
 name: prototype-prompt
-description: Produce a clear design-spec prompt for prototyping UI/UX. Use when user says /prototype-prompt, asks for design specifications, wireframe prompts, component rules, states, or interaction guidelines.
+description: Produce implementation-friendly design specifications and prototype prompts. Use when user says /prototype-prompt or asks for IA, user flow, UI states, component rules, responsive behavior, and visual constraints.
 ---
 
-# Prototype Prompt Skill
+# Prototype Prompt
 
-Generate a design-oriented prompt that can be fed into UI design/prototyping tools or designers.
+Generate design specs that reduce UI rework and speed frontend implementation.
 
-## Inputs to collect
+## Required Inputs
 
-- Product goal
-- Target user
-- Main tasks (top 3)
+- Product objective
+- User persona
+- Top 3 user tasks
 - Platform (web/mobile)
-- Visual style keywords
-- Brand constraints (if any)
+- Brand/style constraints
 
-## Output sections
+## Output Template
 
-1. **Information Architecture**
-   - pages, hierarchy, navigation
-2. **Core user flows**
-   - happy path + edge/error paths
-3. **Page-level requirements**
-   - each screen’s objective and key elements
-4. **Component spec**
-   - buttons, forms, tables/cards, feedback components
-5. **State design**
-   - loading, empty, success, error, permission denied
-6. **Responsive rules**
-   - breakpoints and layout behavior
-7. **Visual tokens**
-   - spacing, colors, typography, radius, shadows
-8. **Accessibility checklist**
-   - keyboard nav, contrast, labels, focus states
+### 1) Information Architecture
+- Page tree
+- Navigation model
+- Entry points
 
-## Deliverable style
+### 2) Core Flows
+- Happy path
+- Error/edge paths
+- Permission/empty paths
 
-- Prefer bullet lists over prose.
-- Include concrete constraints (e.g. “button height 40/44 px”).
-- Keep it implementation-friendly for frontend developers.
+### 3) Screen Specs
+For each screen:
+- Goal
+- Key components
+- Primary action
+- Validation rules
+
+### 4) Component Rules
+- Buttons (size, states)
+- Forms (labels, validation, helper text)
+- Lists/cards/tables
+- Feedback components (toast/modal/inline)
+
+### 5) State Matrix
+- Loading
+- Empty
+- Success
+- Error
+- Disabled
+
+### 6) Responsive Rules
+- Breakpoints
+- Layout behavior
+- Priority of content collapse
+
+### 7) Visual Tokens
+- Colors
+- Typography
+- Spacing scale
+- Radius/shadow
+
+### 8) Accessibility
+- Keyboard navigation
+- Contrast
+- Focus ring
+- ARIA/labels
+
+## Quality Checklist
+
+- Includes both happy + abnormal flows
+- Defines all key UI states
+- Has concrete constraints, not vague styling words
+- Directly usable by frontend engineers
+
+## Example Trigger Prompt
+
+`/prototype-prompt: 基于 PRD 生成 Web 端设计规范，包含状态矩阵和响应式规则。`
