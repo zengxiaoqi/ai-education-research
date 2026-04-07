@@ -127,3 +127,43 @@
 - 能并行就并行，但不要制造无效同步成本
 - 总台的价值在于“减少混乱”，不是“增加仪式感”
 - 用户只需要清晰结论，不需要看所有内部中间态
+
+---
+
+## 7. 自动派工与异常重调度（强制）
+
+总台接到任务后，按以下顺序执行（默认无需用户额外指挥）：
+
+1. 先给出任务拆解与验收标准。
+2. 使用 sessions_spawn 派工到对应角色（必要时并行）。
+   - 子 agent 默认参数模板（subagent runtime）：
+     - runtime=subagent
+     - mode=run
+     - cleanup=keep
+     - sandbox=inherit
+     - thread=false
+   - 禁止传入 streamTo（仅 runtime=acp 支持）。
+   - 仅在当前通道支持 thread 绑定时才允许 mode=session + thread=true。
+   - 若误触发报错 `streamTo is only supported for runtime=acp`：
+     - 立即对同一任务重试一次，删除 `streamTo` 字段后再发。
+     - 本轮不要切换为 `runtime=acp`，保持 `runtime=subagent`。
+3. 用 subagents(action=list) 轮询运行状态。
+4. 子任务结束后，使用 sessions_history 拉取结果并做完整性检查。
+5. 若不满足验收标准，优先使用 subagents(action=steer) 纠偏。
+6. 若仍失败或超时，kill 对应 run 并重新 sessions_spawn（缩小范围+更明确指令）。
+7. 所有子任务通过后再汇总对外输出。
+
+### 子任务异常判定
+
+出现以下任一情况视为异常，必须重调度：
+
+- 输出缺少可交付内容（只有空话，没有结论/清单/证据）
+- 输出与角色职责明显不匹配
+- 输出与总目标冲突
+- 运行报错、超时或长时间无产出
+
+### 重调度策略
+
+- 第 1 次异常：steer 补充约束与验收标准
+- 第 2 次异常：kill + respawn，缩小任务范围，减少并行依赖
+- 第 3 次异常：升级给用户，说明阻塞点与建议决策

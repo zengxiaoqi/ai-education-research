@@ -1,89 +1,61 @@
-## [ERR-20260319-001] git-push-proxy-env
+# Errors
 
-**Logged**: 2026-03-19T00:33:00+08:00
-**Priority**: high
+## [ERR-20260321-001] bash_printf_dash_header
+
+**Logged**: 2026-03-21T15:25:00+08:00
+**Priority**: low
 **Status**: pending
-**Area**: config
+**Area**: infra
 
 ### Summary
-`git push` failed with `Unsupported proxy syntax` because proxy env vars in `~/.bashrc` contained escaped quotes.
-
-### Details
-User-side shell had:
-- `export http_proxy=\"http://${hostip}:${proxyport}\";`
-- `export https_proxy=\"http://${hostip}:${proxyport}\";`
-This produced malformed values like `172.24.80.1:10808"` and broke Git's proxy parser.
-
-### Suggested Action
-Use unquoted/normal assignment in shell rc files:
-- `export http_proxy="http://${hostip}:${proxyport}"`
-- `export https_proxy="http://${hostip}:${proxyport}"`
-- `export all_proxy="socks5://${hostip}:${proxyport}"`
-Then `source ~/.bashrc` and verify with `env | grep -i proxy`.
-
-### Metadata
-- Source: error
-- Related Files: /home/zxq/.bashrc
-- Tags: git, github, proxy, wsl, bashrc
-
----
-
-## [ERR-20260319-001] prisma7-config-change
-
-**Logged**: 2026-03-19T11:00:00+08:00
-**Priority**: high
-**Status**: pending
-**Area**: backend
-
-### Summary
-Prisma 7 no longer accepts datasource url in schema.prisma; requires prisma.config.ts/direct adapter config.
+Shell command failed because `printf '--- FILES ---\n'` was parsed as an option-like argument.
 
 ### Error
-```
-Error: Prisma schema validation - (get-config wasm)
-The datasource property `url` is no longer supported in schema files.
-Move connection URLs for Migrate to `prisma.config.ts`
+```text
+/bin/bash: line 1: printf: --: invalid option
+printf: usage: printf [-v var] format [arguments]
 ```
 
 ### Context
-- Command attempted: `npx prisma generate`
-- Project: ai-education-research/apps/web
-- Initial scaffold used legacy Prisma schema pattern with `url = env("DATABASE_URL")`
+- Command/operation attempted: exec health check command in ai-education-research/apps/web
+- Trigger: format string started with `---`
+- Safer pattern: `printf '%s\n' '--- FILES ---'`
 
 ### Suggested Fix
-Add `prisma.config.ts` for Prisma 7 or pin Prisma to a version using schema datasource URL semantics.
+Use `%s\n` format strings when printing literals that begin with `-`.
 
 ### Metadata
 - Reproducible: yes
-- Related Files: ai-education-research/apps/web/prisma/schema.prisma
+- Related Files: n/a
 
 ---
 
-## [ERR-20260321-001] git-add-untracked-deletion
+## [ERR-20260321-002] subagent_streamto_runtime_mismatch
 
-**Logged**: 2026-03-21T11:39:00+08:00
-**Priority**: medium
+**Logged**: 2026-03-21T16:32:00+08:00
+**Priority**: high
 **Status**: pending
-**Area**: config
+**Area**: infra
 
 ### Summary
-Tried to `git add` a deleted file that had never been tracked, causing a pathspec failure.
+Subagent dispatch failed repeatedly because `sessions_spawn` was called with `runtime=subagent` while still carrying `streamTo`, which is only valid for `runtime=acp`.
 
 ### Error
-```
-fatal: pathspec '/home/zxq/.openclaw/workspace/BOOTSTRAP.md' did not match any files
+```text
+streamTo is only supported for runtime=acp; got runtime=subagent
 ```
 
 ### Context
-- Operation attempted: remove BOOTSTRAP.md and commit the deletion
-- Command used: `rm .../BOOTSTRAP.md && git add .../BOOTSTRAP.md && git commit ...`
-- Root cause: file was untracked before deletion, so `git add <deleted-untracked-file>` cannot stage it
+- Command/operation attempted: spawn product/ui/engineering/qa workers for ai-education-research MVP orchestration
+- Required safe template: `runtime=subagent, mode=run, cleanup=keep, thread=false`
+- Additional hard rule: omit `streamTo` entirely; do not mix ACP-only fields into subagent payloads
+- Failure mode: orchestration retries wasted turns before switching back to direct execution
 
 ### Suggested Fix
-Check whether the file is tracked before staging deletion; if untracked, only report the local removal or commit another tracked marker/state update.
+For every `runtime=subagent` spawn, omit `streamTo` entirely. Prefer a reusable minimal parameter template and avoid mixed ACP/subagent payloads.
 
 ### Metadata
 - Reproducible: yes
-- Related Files: BOOTSTRAP.md
+- Related Files: /home/zxq/.openclaw/workspace/ORCHESTRATION.md, /home/zxq/.openclaw/workspace/tasks/2026-03-21-ai-education-research-mvp.md
 
 ---

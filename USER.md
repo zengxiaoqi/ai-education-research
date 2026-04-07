@@ -2,8 +2,8 @@
 
 _Learn about the person you're helping. Update this as you go._
 
-- **Name:**
-- **What to call them:**
+- **Name:** boss
+- **What to call them:** boss
 - **Pronouns:** _(optional)_
 - **Timezone:** Asia/Shanghai
 - **Notes:** 管理一个开发团队，希望总台承担接任务、调度子 agent、监督进度、主动汇报风险与进展的职责。

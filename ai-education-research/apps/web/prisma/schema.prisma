@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  teacher
+  student
+}
+
+enum ReviewStatus {
+  pending
+  confirmed
+  revised
+  rejected
+}
+
+model User {
+  id        String      @id @default(cuid())
+  email     String      @unique
+  name      String?
+  role      Role
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  classes     Classroom[] @relation("ClassTeacher")
+  submissions Submission[]
+  reviewTasks ReviewTask[] @relation("Reviewer")
+}
+
+model Classroom {
+  id          String       @id @default(cuid())
+  name        String
+  subject     String
+  grade       String
+  code        String       @unique
+  teacherId   String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  teacher     User         @relation("ClassTeacher", fields: [teacherId], references: [id])
+  assignments Assignment[]
+}
+
+model Assignment {
+  id            String       @id @default(cuid())
+  title         String
+  prompt        String
+  rubric         String
+  misconceptionTags String
+  dueAt         DateTime
+  classroomId   String
+  teacherId     String
+  publishedAt   DateTime     @default(now())
+  createdAt     DateTime     @default(now())
+
+  classroom     Classroom    @relation(fields: [classroomId], references: [id])
+  submissions   Submission[]
+}
+
+model Submission {
+  id            String      @id @default(cuid())
+  assignmentId  String
+  studentId     String
+  answer        String
+  reasoning     String
+  createdAt     DateTime    @default(now())
+
+  assignment    Assignment  @relation(fields: [assignmentId], references: [id])
+  student       User        @relation(fields: [studentId], references: [id])
+  diagnosis     Diagnosis?
+}
+
+model Diagnosis {
+  id                String      @id @default(cuid())
+  submissionId      String      @unique
+  misconceptionType String
+  evidence          String
+  suggestion        String
+  confidence        Float
+  needsReview       Boolean
+    
+  // 多维度评分 (MVP+)
+  dimensionScores   String?     // JSON: { 立意: {score, maxScore, comment}, 结构: {...}, ... }
+  totalScore        Int?         // 总分 (100分制)
+  feedback          String?      // AI 生成的总体评语
+  improvements      String?      // JSON: ["建议1", "建议2"]
+  
+  createdAt         DateTime     @default(now())
+
+  submission        Submission   @relation(fields: [submissionId], references: [id])
+  reviewTask        ReviewTask?
+}
+
+model ReviewTask {
+  id          String       @id @default(cuid())
+  diagnosisId String       @unique
+  reviewerId  String?
+  status      ReviewStatus @default(pending)
+  note        String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  diagnosis   Diagnosis    @relation(fields: [diagnosisId], references: [id])
+  reviewer    User?        @relation("Reviewer", fields: [reviewerId], references: [id])
+}
